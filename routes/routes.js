@@ -37,9 +37,16 @@ module.exports = function(app, passport, connection) {
 					connection.query(insert_query, function(err, rows){
 						if(err) throw err;
 						req.session.users = req.body.data;
-						res.json({'code':200,'status':'OK','result':req.session.users});
+						res.send({'code':200,'status':'OK','result':req.session.users});
 					});
 				}else if(type == 'google'){
+					insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`gplus_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
+					connection.query(insert_query, function(err, rows){
+						if(err) throw err;
+						console.log(rows);
+						req.session.users = req.body.data;
+					});
+				}else if(type == 'twitter'){
 					insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`gplus_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
 					connection.query(insert_query, function(err, rows){
 						if(err) throw err;
@@ -56,6 +63,13 @@ module.exports = function(app, passport, connection) {
 						res.json({'code':200,'status':'OK','result':req.session.users});
 					});
 				}else if( type == 'google'){
+					update_query = "UPDATE `users` SET `gplus_id` = '"+id+"', `profile_image` = '"+img+"' WHERE `email_id` = '"+email+"'"					
+					connection.query(update_query, function(err, rows){
+						if(err) throw err;
+						console.log(rows);
+						req.session.users = req.body.data;
+					});
+				}else if( type == 'twitter'){
 					update_query = "UPDATE `users` SET `gplus_id` = '"+id+"', `profile_image` = '"+img+"' WHERE `email_id` = '"+email+"'"					
 					connection.query(update_query, function(err, rows){
 						if(err) throw err;
@@ -129,11 +143,7 @@ app.get('/auth/twitter', function(req, res) {
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
-console.log(req.isAuthenticated());
-    // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
         return next();
-
-    // if they aren't redirect them to the home page
     res.redirect('/');
 }

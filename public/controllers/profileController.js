@@ -38,12 +38,16 @@ app.controller("profileController", function($scope, Session, $http, $window){
 	
 	/* Update loggedin User Profile */ 
 	$scope.updateProfile = function(){
-		
-		console.log($scope.profileData)
-		/* $http.put('/updateProfile').success(function(response){
-			console.log($scope.profileData)
-			//$scope.gnere = response;
-		}); */
+		$http.put('/updateProfile',{'data': $scope.profileData}).success(function(response){
+			console.log(response);
+			if(response.status == "failed"){
+				$scope.message = response.message;
+			}else{
+				$http.get('/my-profile').success(function(response){
+					$scope.profileData = response;
+				});
+			}
+		});
 	}
 	
 	setTimeout(function(){
@@ -53,13 +57,13 @@ app.controller("profileController", function($scope, Session, $http, $window){
 	
 	$.fn.select2fn = function() {
 		$('#interestCategory').select2();
-		$("#derp").find('input').attr('disabled', 'true');
-		$("#derp").find('select').attr('disabled', 'true');
+		$("#profile").find('input').attr('disabled', 'true');
+		$("#profile").find('select').attr('disabled', 'true');
 	};
 	
 	$.fn.removeDisabled = function() {
-		$("#derp").find('input').removeAttr('disabled');
-		$("#derp").find('select').removeAttr('disabled');
+		$("#profile").find('input').removeAttr('disabled');
+		$("#profile").find('select').removeAttr('disabled');
 	};
 	$.fn.defaultSelect2Values = function() {
 			for(var i=0;i<tag.length;i++){
