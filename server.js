@@ -44,21 +44,7 @@ con.connect(function(err) {
 
 
 require('./routes/routes.js')(app,passport,con);
-/* 
-passport.use(new TwitterStrategy({
-
-        consumerKey     : dbconfig.twitterAuth.consumerKey,
-        consumerSecret  : dbconfig.twitterAuth.consumerSecret,
-        callbackURL     : dbconfig.twitterAuth.callbackURL
-
-    },
-    function(token, tokenSecret, profile, done) {
-        process.nextTick(function() {
-           console.log(profile);
-    });
-
-    }));
- */
+require('./routes/users.js')(app,passport,con);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

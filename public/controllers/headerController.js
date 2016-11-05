@@ -1,4 +1,4 @@
-app.controller("headerController", function($scope, Session, $http){
+app.controller("headerController", function($scope, Session, $http,$window){
 	$scope.data = {};
 	$scope.session = Session;
 
@@ -23,6 +23,7 @@ app.controller("headerController", function($scope, Session, $http){
 			Session.updateSession();
 			$scope.hasuser="false";
 			$scope.username="";
+			$window.location.href = '#/';
 		});
 	}
 		
@@ -37,18 +38,26 @@ app.controller("headerController", function($scope, Session, $http){
 					$scope.data.last_name = response.last_name;
 					$scope.data.email = response.email;
 					$scope.data.img = response.picture.data.url;
-					$http.post('/saveUser',{data:$scope.data}).success(function(response){
-						if(response.status == 'OK'){
-							var results = response.result;
-							$scope.username = results.first_name;
-							$scope.hasuser="true";
-						}else{
-							$scope.hasuser="false";
+					FB.api(
+						"/"+response.id+"/picture?width=216",
+						function (response) {						
+						  if (response && !response.error) {
+							$scope.data.img = response.data.url;
+							$http.post('/saveUser',{data:$scope.data}).success(function(response){
+								if(response.status == 'OK'){
+									var results = response.result;
+									$scope.username = results.first_name;
+									$scope.hasuser="true";
+								}else{
+									$scope.hasuser="false";
+								}
+								
+							});
+						  }
 						}
-						
-					});
-					
+					);
 				});
+				
 			}
 		}, {scope: 'email,public_profile', return_scopes: true});
 	};
@@ -143,17 +152,12 @@ $scope.loginCallback = function (authResult)
 	    gapi.client.setApiKey('AIzaSyDor89kMIaagUpVhKc5ifpkvS_jk53lO_Y');
 	    gapi.client.load('plus', 'v1',function(){});
 	}
-	$.fn.twitterLogin = function(type){
-		var config = {headers:  {
-		        'Authorization': 'Basic d2VudHdvcnRobWFuOkNoYW5nZV9tZQ==',
-		        'Accept': 'application/json;odata=verbose',
-		        "X-Testing" : "testing"
-		    }
-		};
-		$http.post('https://api.twitter.com/oauth/request_token',config).success(function(response){
-			console.log(response);
-		});
-
+	
+ //when the user clicks the twitter button, the popup authorization window opens
+    $.fn.twitterLogin = function(type) {
+       $http.get('/auth/twitter').success(function(rs){
+      $window.open(rs,'_self','width=500,height=400');
+       })
 	}
 	
 
