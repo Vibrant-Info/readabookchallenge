@@ -1,14 +1,21 @@
-<main id="page" role="main" ng-controller="profileController">
+<style>
+	.navbar{
+		background-color: black !important;
+	}
+</style>
+<main id="page" role="main" ng-controller="profileController" data-ng-init="loadData()">
 	<!-- comment the linebreak between these two elements because science
 		--><!-- comment the linebreak between these two elements because science
 		-->
-	<div id="content" class="main-content" data-content-field="main-content" data-collection-id="57cd327e893fc06c8c5079d0" >
+	<div id="content" class="main-content">
 		<!-- Create index sections -->
-		<div id="media" class="index-section" data-url-id="media" data-collection-id="57cc5fabe4fcb57e0d377ab5" data-edit-main-image="Banner">
+		<div id="media" class="index-section">
 			<div class="promoted-gallery-wrapper"></div>
 			<div class="index-section-wrapper page-content">
-				<div class="text-center"><img src="images/johndoe.jpg" alt="" /><br>
-					<strong>John Doe</strong>
+				
+				<div class="text-center" style="padding: 35px;">
+					<img src="{{profileData.profile_image}}" alt="{{profileData.first_name}} {{profileData.last_name}}" height="216px" width="216px"/>
+					<br/><strong>{{profileData.first_name}} {{profileData.last_name}}</strong>
 				</div>
 				<div class="text-center">
 					<div id="clockdiv">
@@ -34,6 +41,9 @@
 					</div>
 				</div>
 				<div class="col-xs-12">
+					<div class="text-center">
+						<a class="button sqs-system-button sqs-editable-button btn-start" href="start-challenge.html">Start the Challenge</a>
+					</div>
 					<div class="col-xs-12 col-sm-6 text-right">
 						<a ng-click="return()" class="button sqs-system-button sqs-editable-button btn-start return-books">Return the Books</a>
 					</div>
@@ -43,127 +53,133 @@
 				</div>
 				<div class="form-wrapper">
 					<div class="form-inner-wrapper">
-						<form autocomplete="on" action="https://rishav-jain-6ema.squarespace.com/" method="POST" onsubmit="return (function(form) { Y.use ('squarespace-form-submit', 'node', function (Y) { (new Y.Squarespace.FormSubmit({ formNode: Y.Node(form) })).submit('57cc5fabe4fcb57e0d377ab4', '57cc5fabe4fcb57e0d377ab5', 'page-57cc5fabe4fcb57e0d377ab5') }); return false;})(this)">
+						<form>
 							<div class="field-list clear">
 								<div class="form-group">
 									<label for="inputEmail" class="profile-label">Favourite Genre :</label>
-									<select id="insightList" multiple="multiple" class="multi-input field-element">
-										<optgroup label="Group 1">
-											<option value="1-1">Option 1.1</option>
-											<option value="2-1">Option 2.1</option>
-											<option value="2-2">Option 2.2</option>
-											<option value="2-3">Option 2.3</option>
-										</optgroup>
+									<select id="interestCategory" multiple="multiple" class="multi-input field-element">
+										<option ng-repeat="x in gnere" value="{{x.id}}">{{x.name}}</option>
 									</select>
 								</div>
 							</div>
 							<div class="panel-group profile-accordion" id="accordion">
-								<div class="panel panel-default">
-									<div id="collapseOne" class="panel-collapse collapse">
+								<div class="panel panel-default slideable" id="derp">
+									<div>
 										<div class="panel-body">
 											<div class="content-inner has-content" data-content-field="main-content">
 												<div class="mrgtopbot">
-													<strong>Personal Details</strong> <button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with pull-right">Edit</button>
+													<strong>Personal Details</strong> 
+														<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with pull-right" ng-click="editProfile();show = !show" ng-show="!show">Edit</button>
+														<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with pull-right" ng-show="show" ng-click="return();show = !show">Cancel</button>
 												</div>
-												<div class="field-list clear">
-													<div id="deposit" class="form-item field text">
-														<label class="title profile-label" for="deposit">Deposit Amount</label>
-														<div class="profile-input">
-															<div class="col-xs-12 col-sm-6 col-md-8 nopadding">
-																<input class="field-element text" type="text" id="deposit" />
+												
+												
+												<form name="profileForm">
+													<div class="field-list clear">
+														<div id="deposit" class="form-item field text">
+															<label class="title profile-label" for="deposit">Deposit Amount</label>
+															<div class="profile-input">
+																<div class="col-xs-12 col-sm-6 col-md-8 nopadding">
+																	<label class="caption"><input class="field-element text" type="text" id="deposit" ng-model="profileData.wallet"/></label>
+																</div>
+																<div class="col-xs-12 col-sm-6 col-md-4 nopadding text-right">
+																	<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-if="profileData.wallet < 0">Pay Deposit</button> <button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-if="profileData.wallet > 0">Withdraw</button>
+																</div>
 															</div>
-															<div class="col-xs-12 col-sm-6 col-md-4 nopadding text-right">
-																<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with">Pay Deposit</button> <button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with">Withdraw</button>
+														</div>
+														
+														
+														<fieldset class="form-item fields name required clearfix">
+															<div class="title">Name <span class="required">*</span></div>
+															<legend>Name</legend>
+															<div class="field first-name">
+																<label class="caption">
+																<input class="field-element field-control"
+																	type="text"
+																	name="first_name"
+																	ng-model="profileData.first_name" required/>
+																First Name</label>
 															</div>
+															<div class="field last-name">
+																<label class="caption"><input class="field-element field-control"
+																	type="text"
+																	ng-model="profileData.last_name" required/>
+																Last Name</label>
+															</div>
+															<div class="field first-name">
+																<div>Contact Number <span class="required">*</span></div>
+																<label class="caption"><input class="field-element field-control"
+																	type="text"
+																	ng-model="profileData.phone_number" required/>
+																</label>
+															</div>
+															<div class="field last-name">
+																<div>Alternative Contact Number <span class="required"></span></div>
+																<label class="caption"><input class="field-element field-control"
+																	type="text"
+																	ng-model="profileData.alt_phone_number"
+																	/>
+																Please provide an alternative contact number on which we can get in touch with you.</label>
+															</div>
+														</fieldset>
+														<div class="form-item field email required">
+															<label class="caption">Email Address <span class="required">*</span>
+															<input class="field-element" name="email" 
+																type="email"  
+																ng-model="profileData.email_id" required/></label>
 														</div>
-													</div>
-													<fieldset id="name-yui_3_17_2_5_1473010258464_6256" class="form-item fields name required clearfix">
-														<div class="title">Name <span class="required">*</span></div>
-														<legend>Name</legend>
-														<div class="field first-name">
-															<label class="caption"><input class="field-element field-control" name="fname"
-																x-autocompletetype="given-name" type="text"
-																spellcheck="false"
-																maxlength="30"
-																data-title="First" />
-															First Name</label>
+														<div class="form-item field email required">
+															<label class="caption">Age<span class="required"></span>
+															<input class="field-element" name="email" 
+																type="text"  
+																ng-model="profileData.age"/></label>
 														</div>
-														<div class="field last-name">
-															<label class="caption"><input class="field-element field-control" name="lname"
-																x-autocompletetype="surname" type="text"
-																spellcheck="false" maxlength="30" data-title="Last" />
-															Last Name</label>
+														<p class="form-subtitle caption"><strong>Shipping and Billing Details</strong></p>
+														<div class="form-item field textarea required">
+															<label class="caption">Address <span class="required">*</span>
+															<input class="field-element" ng-model="profileData.address" required/></label>
 														</div>
-													</fieldset>
-													<fieldset id="name-yui_3_17_2_5_1473010258464_6256" class="form-item fields name required clearfix">
-														<div class="field first-name">
-															<div>Contact Number <span class="required">*</span></div>
-															<label class="caption"><input class="field-element field-control" name="fname"
-																x-autocompletetype="given-name" type="text"
-																spellcheck="false"
-																maxlength="30"
-																data-title="First" />
+														<fieldset class="form-item fields name required">
+															<legend>Name</legend>
+															<div class="field first-name">
+																<label class="caption">City <span class="required">*</span>
+																<select class="field-element" ng-model="profileData.city" required>
+																	<option ng-repeat="x in city" value="{{x.city_name}}" ng-selected="x.city_name == profileData.city">{{x.city_name}}</option>
+																</select>
+																</label>
+															</div>
+															<div class="field last-name">
+																<label class="caption">Area <span class="required" >*</span> 
+																<input class="field-element field-control" ng-model="profileData.area" required/>
+																</label>
+															</div>
+														</fieldset>
+														<div class="form-item field text">
+															<label class="caption" >Landmark
+															<div class="description">Mention the nearest Landmark.</div>
+															<input class="field-element text" type="text" ng-model="profileData.landmark" required/>
 															</label>
 														</div>
-														<div class="field last-name">
-															<div>Alternative Contact Number <span class="required">*</span></div>
-															<label class="caption"><input class="field-element field-control" name="lname"
-																x-autocompletetype="surname" type="text"
-																spellcheck="false" maxlength="30" data-title="Last" />
-															Please provide an alternative contact number on which we can get in touch with you.</label>
-														</div>
-													</fieldset>
-													<div id="email-yui_3_17_2_5_1473010258464_6257" class="form-item field email required">
-														<label class="title" for="email-yui_3_17_2_5_1473010258464_6257-field">Email Address <span class="required">*</span></label>
-														<input class="field-element" name="email" x-autocompletetype="email" type="text" spellcheck="false" id="email-yui_3_17_2_5_1473010258464_6257-field" />
-													</div>
-													<div id="checkbox-yui_3_17_2_1_1473010258464_23472" class="form-item field checkbox required">
-														<div class="title" for="checkbox-yui_3_17_2_1_1473010258464_23472-field">Age <span class="required">*</span></div>
-														<input class="field-element" name="email" x-autocompletetype="email" type="text" spellcheck="false" id="email-yui_3_17_2_5_1473010258464_6257-field" />
-													</div>
-													<p class="form-subtitle"><strong>Shipping and Billing Details</strong></p>
-													<div id="textarea-yui_3_17_2_1_1473010258464_47139" class="form-item field textarea required">
-														<label class="title" for="textarea-yui_3_17_2_1_1473010258464_47139-field">Address <span class="required">*</span></label>
-														<input class="field-element" name="email" x-autocompletetype="email" type="text" spellcheck="false" id="email-yui_3_17_2_5_1473010258464_6257-field" />
-													</div>
-													<fieldset id="name-yui_3_17_2_5_1473010258464_6256" class="form-item fields name required">
-														<legend>Name</legend>
-														<div class="field first-name">
-															<label class="caption">City <span class="required">*</span> 
-															<input class="field-element field-control" name="fname"
-																x-autocompletetype="given-name" type="text"
-																spellcheck="false"
-																maxlength="30"
-																data-title="First" />
+														<div class="form-item field text required">
+															<label class="caption">Pincode <span class="required">*</span>
+															<select class="field-element" ng-model="profileData.pincode" required>
+																<option ng-repeat="x in pincode" value="{{x.area}}" ng-selected="x.area == profileData.pincode">{{x.area}}</option>
+															</select>
 															</label>
 														</div>
-														<div class="field last-name">
-															<label class="caption">Area <span class="required">*</span> 
-															<input class="field-element field-control" name="lname"
-																x-autocompletetype="surname" type="text"
-																spellcheck="false" maxlength="30" data-title="Last" />
-															</label>
-														</div>
-													</fieldset>
-													<div id="text-yui_3_17_2_1_1473010258464_45892" class="form-item field text">
-														<label class="title" for="text-yui_3_17_2_1_1473010258464_45892-field">Landmark</label>
-														<div class="description">Mention the nearest Landmark.</div>
-														<input class="field-element text" type="text" id="text-yui_3_17_2_1_1473010258464_45892-field" />
 													</div>
-													<div id="text-yui_3_17_2_1_1473010258464_47805" class="form-item field text required">
-														<label class="title" for="text-yui_3_17_2_1_1473010258464_47805-field">Pincode <span class="required">*</span></label>
-														<input class="field-element text" type="text" id="text-yui_3_17_2_1_1473010258464_47805-field" />
+													<div class="form-button-wrapper form-button-wrapper--align-left">
+														<input type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-click="updateProfile()" value="SAVE">
 													</div>
-												</div>
-												<div class="form-button-wrapper form-button-wrapper--align-left">
-													<input class="button sqs-system-button sqs-editable-button btn-pay-with" type="submit" value="Save"/>
-												</div>
+													<input type="button" ng-click="updateProfile()" ng-disabled="profileForm.$invalid" value="SAVE">
+												</form>
 											</div>
 										</div>
 									</div>
-									<div class="panel-heading">
+								</div>
+									<div class="panel-heading" slide-toggle="#derp">
 										<h4 class="panel-title text-center">
-											<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" id="accordion">
+											<a class="accordion-toggle">
 												<div class="bounce">
 													<i class="fa fa-angle-down" aria-hidden="true"></i>
 													<i class="fa fa-angle-up" aria-hidden="true"></i>
@@ -171,7 +187,6 @@
 											</a>
 										</h4>
 									</div>
-								</div>
 							</div>
 							<!-- accordion ends -->
 							<div class="nav nav-tabs profile-tab">
