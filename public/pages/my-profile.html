@@ -16,37 +16,17 @@
 					<img src="{{profileData.profile_image}}" alt="{{profileData.first_name}} {{profileData.last_name}}" height="216px" width="216px"/>
 					<br/><strong>{{profileData.first_name}} {{profileData.last_name}}</strong>
 				</div>
-				<div class="text-center">
-					<div id="clockdiv">
-						<div>
-							<span class="days"></span>
-							<div class="smalltext">Days</div>
-						</div>
-						<div class="sepretor">:</div>
-						<div>
-							<span class="hours"></span>
-							<div class="smalltext">Hours</div>
-						</div>
-						<div class="sepretor">:</div>
-						<div>
-							<span class="minutes"></span>
-							<div class="smalltext">Minutes</div>
-						</div>
-						<div class="sepretor">:</div>
-						<div>
-							<span class="seconds"></span>
-							<div class="smalltext">Seconds</div>
-						</div>
-					</div>
+				<div class="text-center" ng-if="checkChallenge">
+					<span id="future_date"></span>
 				</div>
 				<div class="col-xs-12">
-					<div class="text-center">
+					<div class="text-center" ng-if="!checkChallenge">
 						<a class="button sqs-system-button sqs-editable-button btn-start" href="start-challenge.html">Start the Challenge</a>
 					</div>
-					<div class="col-xs-12 col-sm-6 text-right">
-						<a ng-click="return()" class="button sqs-system-button sqs-editable-button btn-start return-books">Return the Books</a>
+					<div class="col-xs-12 col-sm-6 text-right" ng-if="checkChallenge">
+						<a class="button sqs-system-button sqs-editable-button btn-start return-books">Return the Books</a>
 					</div>
-					<div class="col-xs-12 col-sm-6 text-left">
+					<div class="col-xs-12 col-sm-6 text-left" ng-if="checkChallenge">
 						<a class="button sqs-system-button sqs-editable-button btn-start time-ext">Extend the Time</a>
 					</div>
 				</div>
@@ -56,7 +36,7 @@
 								<div class="form-group">
 									<label for="inputEmail" class="profile-label">Favourite Genre :</label>
 									<select id="interestCategory" multiple="multiple" class="multi-input field-element">
-										<option ng-repeat="x in gnere" value="{{x.id}}">{{x.name}}</option>
+										<option ng-repeat="x in gnere" value="{{x.id}}" >{{x.name}}</option>
 									</select>
 								</div>
 							</div>
@@ -184,91 +164,33 @@
 									</div>
 							</div>
 							<!-- accordion ends -->
+							
+							
 							<div class="nav nav-tabs profile-tab">
-								<div class="active col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab"><a data-toggle="tab" href="#home">Currently Reading</a></div>
-								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab"><a data-toggle="tab" href="#menu1">My Wishlist</a></div>
-								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab"><a data-toggle="tab" href="#menu2">My Library</a></div>
+								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'reading'}"><a href="" ng-click="content = 'reading'">Currently Reading</a></div>
+								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'wishlist'}"><a href="" ng-click="content = 'wishlist'">My Wishlist</a></div>
+								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'library'}"><a href="" ng-click="content = 'library'">My Library</a></div>
 							</div>
-							<div class="tab-content profile-tab-content">
-								<div id="home" class="tab-pane fade in active">
+							<div class="tab-content profile-tab-content" ng-switch="content">
+								<div id="home" class="" ng-switch-when="reading">
 									<div class="col-xs-12 nopadding">
 										<div class="row row-pdgm">
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
+											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device" ng-repeat="details in books" >
 												<div class="buk-nme">
 													<div class="buk-img">
-														<img src="images/book-1.jpg" alt="">
+														<img src="{{details.cover}}" alt="">
 													</div>
 													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-2.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-3.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-1.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-2.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-3.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
+														<p>{{details.title}}</p>
+														<p>{{details.author}}</p>
+														<p>Genre : {{details.category_name}}</p>
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div id="menu1" class="tab-pane fade">
+								<div id="menu1" class="" ng-switch-when="wishlist">
 									<div class="col-xs-12 nopadding">
 										<div class="row">
 											<div class="col-sm-12">
@@ -298,75 +220,10 @@
 													</div>
 												</div>
 											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-2.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-3.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-1.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-2.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-3.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
 										</div>
 									</div>
 								</div>
-								<div id="menu2" class="tab-pane fade">
+								<div id="menu2" class="" ng-switch-when="library">
 									<div class="col-xs-12 nopadding">
 										<div class="row">
 											<div class="col-sm-12">
@@ -387,71 +244,6 @@
 												<div class="buk-nme">
 													<div class="buk-img">
 														<img src="images/book-1.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-2.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-3.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-1.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-2.jpg" alt="">
-													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-3.jpg" alt="">
 													</div>
 													<div class="buk-dtls">
 														<p>Name of the book</p>

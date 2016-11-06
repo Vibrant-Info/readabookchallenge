@@ -1,9 +1,30 @@
 app.controller("profileController", function($scope, Session, $http, $window){
 	$scope.data = {};	
 	$scope.session = Session;
-	//$scope.arrow = true;
+	$scope.content = 'reading';
+	
+	//$scope.seconds = new Date('2016-12-03 11:34:35').getTime() / 1000;
+	
+	
+	
 	$scope.return = function(){
+		var timerCount;
+		$http.get('/books').success(function(response){
+			$scope.books = response.reading;
+			$scope.timer = response.timer;
+			if( response.length == 0 ){	
+				callAgain($scope.timer);
+				$scope.checkChallenge = false;
+			}else{
+				$scope.checkChallenge = false;
+				$().select2fn();				
+			}
+		});
+	}
+	
+	function callAgain(timerCount){		
 		$().select2fn();
+		$().countDown(timerCount);
 	}
 	
 	if($scope.session.data == ""){	
@@ -23,12 +44,35 @@ app.controller("profileController", function($scope, Session, $http, $window){
 		$http.get('/city').success(function(response){
 			$scope.city = response;
 		});
+		
 		$http.get('/pincode').success(function(response){
 			$scope.pincode = response;
 		});
-		$http.get('/gnere').success(function(response){
-			$scope.gnere = response;
+		
+		$http.get('/genre').success(function(response){
+			var interestedID = [];
+			$scope.gnere = response.genres;
+			var interested = response.interested;
+			for(i=0; i < interested.length; i++){
+				interestedID.push(interested[i]['category_id']);
+			}
+			setTimeout(function(){
+				$('#interestCategory').val(interestedID).trigger("change");
+			}, 500)
+			
 		});
+		
+		$http.get('/books').success(function(response){
+			$scope.books = response.reading;
+			$scope.timer = response.timer;
+			if( response.length == 0 ){				
+				$scope.checkChallenge = false;
+			}else{
+				$scope.checkChallenge = false;
+			}
+		});
+		
+		
 	}
 	
 	/* Edit loggedin User Profile */ 
@@ -56,7 +100,15 @@ app.controller("profileController", function($scope, Session, $http, $window){
 	
 	
 	$.fn.select2fn = function() {
-		$('#interestCategory').select2();
+		$('#interestCategory').select2().on("select2:selecting", function(e) {			
+			$http.post('/updateGenere',{id: e.params.args.data.id}).success(function(response){
+				
+			});
+        }).on("select2:unselecting", function(e) {
+			$http.post('/updateGenere',{id: e.params.args.data.id}).success(function(response){
+				
+			});
+        });
 		$("#profile").find('input').attr('disabled', 'true');
 		$("#profile").find('select').attr('disabled', 'true');
 	};
@@ -65,46 +117,22 @@ app.controller("profileController", function($scope, Session, $http, $window){
 		$("#profile").find('input').removeAttr('disabled');
 		$("#profile").find('select').removeAttr('disabled');
 	};
-	$.fn.defaultSelect2Values = function() {
-			for(var i=0;i<tag.length;i++){
-				tags.push(tag[i].name);
-				tag_id.push(tag[i].id);
-			}
-		
-			 selections = ["37"];
-			
-			var extract_preselected_ids = function (element) {
-				var preselected_ids = [];
-				if (element.val())
-					$(element.val().split(",")).each(function () {
-						preselected_ids.push({id: this});
-					});
-				return preselected_ids;
-			};
-
-			var preselect = function (preselected_ids) {
-				var pre_selections = [];
-				for (index in selections)
-					for (id_index in preselected_ids)
-						if (selections[index].id == preselected_ids[id_index].id)
-							pre_selections.push(selections[index]);
-						console.log(pre_selections);
-				return pre_selections;
-			};
-			 $("#select2-option").select2();
-			$('#art_tag').select2({
-				placeholder: 'Select Tags',
-				minimumInputLength: 0,
-				multiple: true,
-				allowClear: true,
-				data: function () {
-					return {results: selections}
-				},
-				initSelection: function (element, callback) {
-					var preselected_ids = extract_preselected_ids(element);
-					var preselections = preselect(preselected_ids);
-					callback(preselections);
-				}
-			}).select2('val', tag_id);
+	$.fn.countDown = function(date) {
+		$('#future_date').countdowntimer({
+            dateAndTime : date,
+            size : "lg",
+            regexpMatchFormat: "([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})",
+			regexpReplaceWith: "$1<sup class='displayformat'>days</sup> $2<sup class='displayformat'>hours</sup> $3<sup class='displayformat'>minutes</sup> $4<sup class='displayformat'>seconds</sup>",
+			timeUp: timeUp
+        });
 	};
+	
+	function timeUp(){
+		$http.post('/timeUp').success(function(response){
+			if(response.affectedRows == 1){
+				$scope.return();
+				$scope.loadData();
+			}
+		});
+	}
 });
