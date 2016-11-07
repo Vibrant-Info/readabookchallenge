@@ -12,11 +12,12 @@ app.controller("profileController", function($scope, Session, $http, $window){
 		$http.get('/books').success(function(response){
 			$scope.books = response.reading;
 			$scope.timer = response.timer;
-			if( response.length == 0 ){	
-				callAgain($scope.timer);
-				$scope.checkChallenge = false;
+			if( response.length == 0 ||  response.length == undefined ){	
+				$scope.startChallenge = true;
+				$().select2fn();
 			}else{
-				$scope.checkChallenge = false;
+				callAgain($scope.timer);
+				$scope.existChallenge = true;
 				$().select2fn();				
 			}
 		});
@@ -65,10 +66,10 @@ app.controller("profileController", function($scope, Session, $http, $window){
 		$http.get('/books').success(function(response){
 			$scope.books = response.reading;
 			$scope.timer = response.timer;
-			if( response.length == 0 ){				
-				$scope.checkChallenge = false;
+			if( response.length == 0 ||  response.length == undefined){				
+				$scope.startChallenge = true;
 			}else{
-				$scope.checkChallenge = false;
+				$scope.existChallenge = true;
 			}
 		});
 		

@@ -16,17 +16,17 @@
 					<img src="{{profileData.profile_image}}" alt="{{profileData.first_name}} {{profileData.last_name}}" height="216px" width="216px"/>
 					<br/><strong>{{profileData.first_name}} {{profileData.last_name}}</strong>
 				</div>
-				<div class="text-center" ng-if="checkChallenge">
+				<div class="text-center" ng-if="existChallenge">
 					<span id="future_date"></span>
 				</div>
 				<div class="col-xs-12">
-					<div class="text-center" ng-if="!checkChallenge">
-						<a class="button sqs-system-button sqs-editable-button btn-start" href="start-challenge.html">Start the Challenge</a>
+					<div class="text-center" ng-if="startChallenge">
+						<a class="button sqs-system-button sqs-editable-button btn-start" href="#/start-challenge">Start the Challenge</a>
 					</div>
-					<div class="col-xs-12 col-sm-6 text-right" ng-if="checkChallenge">
+					<div class="col-xs-12 col-sm-6 text-right" ng-if="existChallenge">
 						<a class="button sqs-system-button sqs-editable-button btn-start return-books">Return the Books</a>
 					</div>
-					<div class="col-xs-12 col-sm-6 text-left" ng-if="checkChallenge">
+					<div class="col-xs-12 col-sm-6 text-left" ng-if="existChallenge">
 						<a class="button sqs-system-button sqs-editable-button btn-start time-ext">Extend the Time</a>
 					</div>
 				</div>

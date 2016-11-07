@@ -25,6 +25,9 @@ app.config(['$routeProvider', '$locationProvider',function($routeProvider, $loca
 		})
 		.when('/profile', {
 			templateUrl : 'pages/my-profile.html'
+		})
+		.when('/start-challenge', {
+			templateUrl : 'pages/start-challenge.html'
 		});
 		//$locationProvider.html5Mode(true);
 }]);

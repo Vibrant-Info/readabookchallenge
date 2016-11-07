@@ -32,7 +32,7 @@ module.exports = function(app, passport, connection) {
 	app.get('/genre', function(req, res) {
 		var genres;
 		var email = req.session.users.email;
-		var query = "SELECT `id`, `category_name` as name FROM `category` WHERE deleted = '0'";
+		var query = "SELECT `id`, `category_name` as name, `category_image` as image FROM `category` WHERE deleted = '0'";
 		connection.query(query, function(err, rows){
 			if(err) throw err;
 			genres = rows;
