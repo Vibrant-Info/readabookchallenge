@@ -1,0 +1,311 @@
+<style>
+	.navbar{
+	background-color: black !important;
+	}
+</style>
+<main id="page" role="main" ng-controller="startChallengeController" ng-init="return();loadData()">
+	<div id="content" class="main-content" data-content-field="main-content" data-collection-id="57cd327e893fc06c8c5079d0" >
+		<br>
+		<div id="media" class="index-section" data-url-id="media" data-collection-id="57cc5fabe4fcb57e0d377ab5" data-edit-main-image="Banner">
+			<div class="promoted-gallery-wrapper"></div>
+			<div class="index-section-wrapper page-content">
+				<div class="row step-row">
+					<div class="col-xs-12 col-sm-4 text-center">Step: 1</div>
+					<div class="col-xs-12 col-sm-4 text-center">Step: 2</div>
+					<div class="col-xs-12 col-sm-4 text-center">Step: 3</div>
+				</div>
+				<div class="nav nav-tabs profile-tab">
+					<div class="col-xs-12 col-sm-4 tb-styl tb-pdgm tb-bdr read-tab"  ng-class="{'active': step == 'step1'}">
+						<a href="">Choose No.of Books & Genres </a>
+						<div class="nav-arrow"></div>
+						<div class="nav-arrow-trans"></div>
+					</div>
+					<div class="col-xs-12 col-sm-4 tb-styl tb-pdgm tb-bdr read-tab" ng-class="{'active': step == 'step2'}">
+						<a href="" >Shopping & Billing Details</a>
+						<div class="nav-arrow"></div>
+						<div class="nav-arrow-trans"></div>
+					</div>
+					<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': step == 'step3'}"><a href="" >Checkout</a></div>
+				</div>
+				<div class="tab-content profile-tab-content" ng-switch="step">
+					<div id="home" ng-switch-when="step1">
+						<div class="col-xs-12 nopadding">
+							<div class="row">
+								<div id="noofbooks" class="form-groups col-xs-12">
+									<label>No of Books <span class="required">*</span></label>
+									<select class="form-control" ng-model="orders.noOfBooks">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+									</select>
+								</div>
+								<div class="col-xs-12">
+									<p class="sub-title">Select the Genres <span class="required">*</span></p>
+									<div class="row strt-challenge-row">
+										<div class="col-sm-3 col-xs-6" ng-repeat="x in gnere | orderBy : 'name'">
+											<div class="gam-img-bdr active_{{x.id}}" toggle-class="active" ng-click="updateCategory(x.id, this)">
+												<img src="{{x.image}}" alt="{{x.name}}" id="img-select">
+												<div class="game-shadow">
+													<div class="gam-tbl">
+														<div class="gam-tbl-cell"><i class="fa fa-check" aria-hidden="true"></i></div>
+													</div>
+												</div>
+											</div>
+											<p>{{x.name}}</p>
+										</div>
+									</div>
+									<div class="form-button-wrapper form-button-wrapper--align-left col-md-12">
+										<div class="row ">
+											<button type="button" class="pull-right button sqs-system-button sqs-editable-button btn-pay-with" ng-click="changeStep2()">Continue</button>
+											<span class="panel-danger pull-right">{{message}}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="menu1" class="" ng-switch-when="step2">
+						<div class="col-xs-12">
+							<div class="row">
+								<div class="form-wrapper">
+									<div class="form-inner-wrapper">
+										<form name="billingForm">
+											<div class="panel-group profile-accordion" id="accordion">
+												<div class="panel panel-default">
+													<div id="collapseOne" class="panel-collapse collapse in" aria-expanded="true">
+														<div class="panel-body nopadding myprofile-form">
+															<div class="content-inner has-content" data-content-field="main-content">
+																<p class="form-subtitle"><strong>Shipping and Billing Details</strong></p>
+																<div class="form-group">
+																	<label>Address <span class="required">*</span></label>
+																	<input type="text" class="form-control" ng-model="profileData.address">
+																</div>
+																<div class="form-group">
+																	<div class="col-xs-12 nopadding">
+																		<div class="row">
+																			<div class="col-sm-6 col-md-6 ">
+																				<label for="exampleInputPassword1">City <span class="required">*</span></label>
+																				<select class="form-control" ng-model="profileData.city" required>
+																					<option ng-repeat="x in city" value="{{x.city_name}}" ng-selected="x.city_name == profileData.city">{{x.city_name}}</option>
+																				</select>
+																			</div>
+																			<div class="col-sm-6 col-md-6 ">
+																				<label for="exampleInputPassword1">Area <span class="required">*</span></label>
+																				<input class="form-control" ng-model="profileData.area" required/>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="form-group">
+																	<label for="exampleInputPassword1">Landmark</label>
+																	<p><small>Mention the nearest Landmark.</small></p>
+																	<input class="form-control" type="text" ng-model="profileData.landmark" required />
+																</div>
+																<div class="form-group">
+																	<label>Pincode <span class="required">*</span></label>
+																	<select class="form-control" ng-model="profileData.pincode" required>
+																		<option ng-repeat="x in pincode" value="{{x.area}}" ng-selected="x.area == profileData.pincode">{{x.area}}</option>
+																	</select>
+																</div>
+																<div class="form-group">
+																	<div class="col-xs-12 nopadding">
+																		<div class="row">
+																			<div class="col-sm-6 col-md-6 ">
+																				<label for="exampleInputPassword1">Contact Number<span class="required">*</span></label>
+																				<input class="form-control" type="text"ng-model="profileData.phone_number" required maxlength="10" numbers-only />
+																			</div>
+																			<div class="col-sm-6 col-md-6 ">
+																				<label for="exampleInputPassword1">Alternative Contact Number <span class="required">*</span></label>
+																				<input class="form-control" type="text"ng-model="profileData.alt_phone_number" maxlength="10" numbers-only/>
+																				<small>Please provide an alternative contact number on which we can get in touch with you.</small> 
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<p class="form-subtitle"><strong>Order Details</strong></p>
+																<div class="table-responsive">
+																	<table class="table odr-dtls-tbl">
+																		<thead>
+																			<tr class="prdt-thead">
+																				<th>No.of Books</th>
+																				<th>Genres</th>
+																				<th>Expected Delivery</th>
+																				<th class="text-right">Price</th>
+																				<th class="text-right">Sub Total</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr class="prdt-dtls">
+																				<td>{{orders.no_of_book}}</td>
+																				<td>{{orders.cat_name}}</td>
+																				<td>{{orders.expectedDate}}</td>
+																				<td class="text-right">Rs.{{orders.price_per_month}}</td>
+																				<td class="text-right">Rs.{{orders.price_per_month}}</td>
+																			</tr>
+																			<tr>
+																				<td colspan="3">
+																				<td class="text-right">Delivery</td>
+																				<td class="text-right">Rs.{{orders.delivery_charge}}</td>
+																			</tr>
+																			<tr>
+																				<td colspan="3">
+																				<td class="text-right">Pickup</td>
+																				<td class="text-right">Rs.{{orders.pickup_charge}}</td>
+																			</tr>
+																			<tr>
+																				<td colspan="3">
+																				<td class="text-right">Refundable Deposit</td>
+																				<td class="text-right">Rs.{{orders.deposit}}</td>
+																			</tr>
+																			<tr>
+																				<td colspan="3">
+																				<td class="text-right">Total Amount</td>
+																				<td class="text-right">Rs.{{orders.total}}</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+																<div class="form-button-wrapper form-button-wrapper--align-left">
+																	<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-disabled="billingForm.$invalid" ng-click="changeStep1()">Back</button>
+																	<button type="button" class="pull-right button sqs-system-button sqs-editable-button btn-pay-with" ng-disabled="billingForm.$invalid" ng-click="changeStep3()">Continue</button>
+																	<span class="panel-danger">{{message}}</span>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- accordion ends -->
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="menu2" class="" ng-switch-when="step3">
+					<div class="col-xs-12 srch-panel">
+					  <div class="row">
+						<p class="form-subtitle"><strong>Payment Method</strong></p>
+						<ul class="nav nav-pills nav-stacked col-md-3">
+						  <li ng-class="{'active': payment == 'credit card'}" ng-click="payment = 'credit card'"><a href="" data-toggle="pill">Credit Card</a></li>
+						  <li ng-class="{'active': payment == 'netbanking'}" ng-click="payment = 'netbanking'"><a href="" data-toggle="pill">Netbanking</a></li>
+						  <li ng-class="{'active': payment == 'debit card'}" ng-click="payment = 'debit card'"><a href="" data-toggle="pill">Debit Card</a></li>
+						  <li ng-class="{'active': payment == 'COD'}" ng-click="payment = 'COD'"><a href="" data-toggle="pill">Cash on Delivery</a></li>
+						</ul>
+						<div class="tab-content nav-stkd-ctnt col-md-6" ng-switch="payment">
+						  <div class="" id="tab_a" ng-switch-when="credit card">
+							<div class="form-wrapper">
+							  <div class="form-inner-wrapper">
+								  <div class="panel-group profile-accordion" id="accordion">
+									<div class="panel panel-default">
+									  <div id="collapseOne" class="panel-collapse collapse in" aria-expanded="true">
+										<div class="panel-body nopadding myprofile-form">
+										  <div class="content-inner has-content" data-content-field="main-content">
+											<form method="POST" name="customerData" action="/ccavRequestHandlerFinal" class="text-center">
+												<input type="hidden" name="merchant_id" id="merchant_id" value="113271" /> 
+												<input type="hidden" name="order_id" value="{{FinalOrderNumber}}" />
+												<input type="hidden" name="currency" value="INR" />
+												<input type="hidden" name="amount" value="{{orders.total}}" />
+												<input type="hidden" name="redirect_url" value="http://readabookchallenge.com/ccavResponseHandlerFinal" />
+												<input type="hidden" name="cancel_url" value="http://readabookchallenge.com/ccavResponseHandlerFinal" />
+												<input type="hidden" name="language" id="language" value="EN" />
+												<input type="hidden" name="billing_name" value="{{profileData.first_name}} {{profileData.last_name}}" />
+												<input type="hidden" name="billing_address" value="{{profileData.address}}" />
+												<input type="hidden" name="billing_zip" value="{{profileData.pincode}}" />
+												<input type="hidden" name="billing_email" value="{{profileData.email_id}}" />
+												<input type="hidden" name="billing_tel" value="{{profileData.phone_number}}" />
+												<input type="hidden" name="billing_country" value="India" />
+												<input type="hidden" name="billing_city" value="{{profileData.city}}" />
+												<button type="submit" class="button sqs-system-button sqs-editable-button btn-pay-with">PROCEED TO PAY</button>
+											</form>
+										  </div>
+										</div>
+									  </div>
+									</div>
+								  </div>
+							  </div>
+							</div>
+						  </div>
+						  <div class="" id="tab_b"  ng-switch-when="netbanking">
+							<div class="form-wrapper">
+							  <div class="form-inner-wrapper">
+								<form method="POST" name="customerData" action="/ccavRequestHandlerFinal" class="text-center">
+									<input type="hidden" name="merchant_id" id="merchant_id" value="113271" /> 
+									<input type="hidden" name="order_id" value="{{FinalOrderNumber}}" />
+									<input type="hidden" name="currency" value="INR" />
+									<input type="hidden" name="amount" value="{{orders.total}}" />
+									<input type="hidden" name="redirect_url" value="http://readabookchallenge.com/ccavResponseHandlerFinal" />
+									<input type="hidden" name="cancel_url" value="http://readabookchallenge.com/ccavResponseHandlerFinal" />
+									<input type="hidden" name="language" id="language" value="EN" />
+									<input type="hidden" name="billing_name" value="{{profileData.first_name}} {{profileData.last_name}}" />
+									<input type="hidden" name="billing_address" value="{{profileData.address}}" />
+									<input type="hidden" name="billing_zip" value="{{profileData.pincode}}" />
+									<input type="hidden" name="billing_email" value="{{profileData.email_id}}" />
+									<input type="hidden" name="billing_tel" value="{{profileData.phone_number}}" />
+									<input type="hidden" name="billing_country" value="India" />
+									<input type="hidden" name="billing_city" value="{{profileData.city}}" />
+									<button type="submit" class="button sqs-system-button sqs-editable-button btn-pay-with">PROCEED TO PAY</button>
+								</form>
+							  </div>
+							</div>
+						  </div>
+						  <div class="" id="tab_c"  ng-switch-when="debit card">
+							<div class="form-wrapper">
+							  <div class="form-inner-wrapper">
+								<form method="POST" name="customerData" action="/ccavRequestHandlerFinal" class="text-center">
+									<input type="hidden" name="merchant_id" id="merchant_id" value="113271" /> 
+									<input type="hidden" name="order_id" value="{{FinalOrderNumber}}" />
+									<input type="hidden" name="currency" value="INR" />
+									<input type="hidden" name="amount" value="{{orders.total}}" />
+									<input type="hidden" name="redirect_url" value="http://readabookchallenge.com/ccavResponseHandlerFinal" />
+									<input type="hidden" name="cancel_url" value="http://readabookchallenge.com/ccavResponseHandlerFinal" />
+									<input type="hidden" name="language" id="language" value="EN" />
+									<input type="hidden" name="billing_name" value="{{profileData.first_name}} {{profileData.last_name}}" />
+									<input type="hidden" name="billing_address" value="{{profileData.address}}" />
+									<input type="hidden" name="billing_zip" value="{{profileData.pincode}}" />
+									<input type="hidden" name="billing_email" value="{{profileData.email_id}}" />
+									<input type="hidden" name="billing_tel" value="{{profileData.phone_number}}" />
+									<input type="hidden" name="billing_country" value="India" />
+									<input type="hidden" name="billing_city" value="{{profileData.city}}" />
+									<button type="submit" class="button sqs-system-button sqs-editable-button btn-pay-with">PROCEED TO PAY</button>
+								</form>
+							  </div>
+							</div>
+						  </div>
+						  <div class="" id="tab_d"  ng-switch-when="COD">
+							<div class="text-center form-button-wrapper form-button-wrapper--align-left">
+							  <button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-click="finalCheckout('COD')">PAY</button>
+							</div>
+						  </div>
+						</div>
+						<!-- tab content -->
+						
+						<div class="col-md-3 nopadding">
+						  <div class="panel panel-default">
+							<div class="main-heading">
+							  <p>Total <span>Rs.{{orders.total}}</span></p>
+							</div>
+							<div class="prdt-panel-body">
+							  <p>Subtotal <span>Rs.{{orders.price_per_month}}</span></p>
+							  <p>Delivery <span>Rs.{{orders.delivery_charge}}</span></p>
+							  <p>Pickup <span>Rs.{{orders.pickup_charge}}</span></p>
+							  <p>Refundable Deposit <span>Rs.{{orders.deposit}}</span></p>
+							</div>
+						  </div>
+						</div>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	
+</main>
