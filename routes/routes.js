@@ -1,15 +1,3 @@
-
-// app/routes.js
-var OAuth = require('oauth').OAuth
-  , oauth = new OAuth(
-      "https://api.twitter.com/oauth/request_token",
-      "https://api.twitter.com/oauth/access_token",
-      "hXexltZCLpO49bLRwxp4wNV0T",
-      "NwYl2EB1nUqq9qHY121E20wKtYGBUyo1qWTrsF2XQGRvRlx6YJ",
-      "1.0",
-      "http://localhost:3000/auth/twitter/callback",
-      "HMAC-SHA1"
-    );
 module.exports = function(app, passport, connection) {   
     app.get('/logout', function(req, res) {
 		req.session.destroy();
@@ -18,67 +6,133 @@ module.exports = function(app, passport, connection) {
     });
 	
     app.post('/saveUser', function(req, res, next) {
+		
+		console.log(req.body)
 		var insert_query, update_query;
-		var pro			= req.body;		
+		var pro			= req.body;	
 		var type		= pro.data.type;
 		var id	 		= pro.data.id;
 		var first_name 	= pro.data.first_name;
 		var last_name 	= pro.data.last_name;
 		var email 		= pro.data.email;
 		var img 		= pro.data.img;		
-		
-		var query = "SELECT * FROM `users` WHERE `email_id` = '"+email+"'";		
-		connection.query(query, function(err, rows){
-			if(err) throw err;
-			
-			if(rows.length == 0){
-				if( type == 'fb'){
-					insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`facebook_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
-					connection.query(insert_query, function(err, rows){
-						if(err) throw err;
-						req.session.users = req.body.data;
-						res.send({'code':200,'status':'OK','result':req.session.users});
-					});
-				}else if(type == 'google'){
-					insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`gplus_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
-					connection.query(insert_query, function(err, rows){
-						if(err) throw err;
-						console.log(rows);
-						req.session.users = req.body.data;
-					});
-				}else if(type == 'twitter'){
-					insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`gplus_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
-					connection.query(insert_query, function(err, rows){
-						if(err) throw err;
-						console.log(rows);
-						req.session.users = req.body.data;
-					});
-				}
-			}else{
-				if( type == 'fb'){
-					update_query = "UPDATE `users` SET `facebook_id` = '"+id+"', `profile_image` = '"+img+"' WHERE `email_id` = '"+email+"'"					
-					connection.query(update_query, function(err, rows){
-						if(err) throw err;
-						req.session.users = req.body.data;
-						res.json({'code':200,'status':'OK','result':req.session.users});
-					});
-				}else if( type == 'google'){
-					update_query = "UPDATE `users` SET `gplus_id` = '"+id+"', `profile_image` = '"+img+"' WHERE `email_id` = '"+email+"'"					
-					connection.query(update_query, function(err, rows){
-						if(err) throw err;
-						console.log(rows);
-						req.session.users = req.body.data;
-					});
-				}else if( type == 'twitter'){
-					update_query = "UPDATE `users` SET `gplus_id` = '"+id+"', `profile_image` = '"+img+"' WHERE `email_id` = '"+email+"'"					
-					connection.query(update_query, function(err, rows){
-						if(err) throw err;
-						console.log(rows);
-						req.session.users = req.body.data;
-					});
-				}
+		console.log(pro)
+		if(type != "twitter"){
+			var query = "";
+			if( type == 'fb'){
+				var query = "SELECT * FROM `users` WHERE `facebook_id` = '"+id+"' OR `email_id` = '"+email+"'";
 			}
-		});
+			if( type == 'google'){
+				var query = "SELECT * FROM `users` WHERE `gplus_id` = '"+id+"' OR `email_id` = '"+email+"'";
+			}
+
+			console.log(query);
+			
+			connection.query(query, function(err, rows){
+				if(err) throw err;
+				
+				if(rows.length == 0){
+					if( type == 'fb'){
+						insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`facebook_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
+						connection.query(insert_query, function(err, rows){
+							if(err) throw err;
+							var query_f = "SELECT * FROM `users` WHERE `facebook_id` = '"+id+"'";	
+							
+							connection.query(query_f, function(err, rows){
+								if(err) throw err;
+								var datas = {};
+								datas.id = rows[0].id;
+								datas.first_name = rows[0].first_name;
+								datas.last_name = rows[0].last_name;
+								datas.email = rows[0].email_id;
+								datas.img = rows[0].profile_image;
+								datas.facebook_id = rows[0].facebook_id;
+								datas.twitter_id = rows[0].twitter_id;
+								datas.gplus_id = rows[0].gplus_id;
+								req.session.users =datas;	
+								res.send({'code':200,'status':'OK','result':req.session.users});								
+							});
+							
+						});
+					}else if(type == 'google'){
+						insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`gplus_id`,`profile_image`) VALUES ('"+first_name+"','"+last_name+"','"+email+"','"+id+"','"+img+"')";
+						connection.query(insert_query, function(err, rows){
+							if(err) throw err;
+							var query_f = "SELECT * FROM `users` WHERE `gplus_id` = '"+id+"'";	
+							console.log(query_f);
+							connection.query(query_f, function(err, rows){
+								if(err) throw err;
+								var datas = {};
+								datas.id = rows[0].id;
+								datas.first_name = rows[0].first_name;
+								datas.last_name = rows[0].last_name;
+								datas.email = rows[0].email_id;
+								datas.img = rows[0].profile_image;
+								datas.facebook_id = rows[0].facebook_id;
+								datas.twitter_id = rows[0].twitter_id;
+								datas.gplus_id = rows[0].gplus_id;
+								req.session.users =datas;	
+								res.send({'code':200,'status':'OK','result':req.session.users});								
+							});
+							
+						});
+					}
+				}else{
+					if( type == 'fb'){
+						update_query = "UPDATE `users` SET  `profile_image` = '"+img+"', `facebook_id` = '"+id+"' WHERE `id` = '"+rows[0]['id']+"'"					
+						connection.query(update_query, function(err, rows){
+							if(err) throw err;
+							var query_f = "SELECT * FROM `users` WHERE `facebook_id` = '"+id+"'";		
+							connection.query(query_f, function(err, rows){
+								if(err) throw err;
+								console.log(rows);
+								var datas = {};
+								datas.id = rows[0].id;
+								datas.first_name = rows[0].first_name;
+								datas.last_name = rows[0].last_name;
+								datas.email = rows[0].email_id;
+								datas.img = rows[0].profile_image;
+								datas.facebook_id = rows[0].facebook_id;
+								datas.twitter_id = rows[0].twitter_id;
+								datas.gplus_id = rows[0].gplus_id;
+								req.session.users =datas;	
+								res.send({'code':200,'status':'OK','result':req.session.users});								
+							});
+							
+						});
+					}else if( type == 'google'){
+						update_query = "UPDATE `users` SET  `profile_image` = '"+img+"', `gplus_id` = '"+id+"'  WHERE `id` = '"+rows[0]['id']+"'"					
+						connection.query(update_query, function(err, rows){
+							if(err) throw err;
+							
+							var query_f = "SELECT * FROM `users` WHERE `gplus_id` = '"+id+"'";		
+							connection.query(query_f, function(err, rows){
+								if(err) throw err;
+								var datas = {};
+								datas.id = rows[0].id;
+								datas.first_name = rows[0].first_name;
+								datas.last_name = rows[0].last_name;
+								datas.email = rows[0].email_id;
+								datas.img = rows[0].profile_image;
+								datas.facebook_id = rows[0].facebook_id;
+								datas.twitter_id = rows[0].twitter_id;
+								datas.gplus_id = rows[0].gplus_id;
+								req.session.users =datas;	
+								res.send({'code':200,'status':'OK','result':req.session.users});								
+							});
+						});
+					}
+				}
+			});
+		}else{	
+			update_query = "UPDATE `users` SET `email_id` = '"+email+"' WHERE `twitter_id` = '"+req.session.users.twitter_id+"'";	
+			
+			connection.query(update_query, function(err, rows){
+				if(err) throw err;
+				req.session.users.email = email;
+				res.send({'code':200,'status':'OK','result':req.session.users});
+			});
+		}
     });
 	
     app.get('/getSession',function(req,res,next){
@@ -86,64 +140,67 @@ module.exports = function(app, passport, connection) {
     });
 	
     
-app.get('/auth/twitter', function(req, res) {
- 
-  oauth.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results) {
-    if (error) {
-      res.redirect("/");
-    }
-    else {
-      req.session.oauth = {
-        token: oauth_token,
-        token_secret: oauth_token_secret
-      };
-    res.send('https://api.twitter.com/oauth/authenticate?oauth_token='+oauth_token);
-    }
-  });
- 
-});
-    
- app.get('/auth/twitter/callback', function(req, res, next) {
- 
-  if (req.session.oauth) {
-    req.session.oauth.verifier = req.query.oauth_verifier;
-    var oauth_data = req.session.oauth;
-    oauth.getOAuthAccessToken(
-      oauth_data.token,
-      oauth_data.token_secret,
-      oauth_data.verifier,
-      function(error, oauth_access_token, oauth_access_token_secret, results) {
-        if (error) {
-          res.send("Authentication Failure!");
-        }
-        else {
-          req.session.oauth.access_token = oauth_access_token;
-          req.session.oauth.access_token_secret = oauth_access_token_secret;
-          console.log(results);
-          var data={
-              id : results.user_id,
-    		  name : results.screen_name,
-    			email : '',
-    			img : '',
-          }
-          req.session.users = data;
-          res.redirect('/');
-        }
-      }
-    );
-  }
-  else {
-    res.redirect('/login'); // Redirect to login page
-  }
- 
-});
+	app.get('/auth/twitter', passport.authenticate('twitter'));
+
+	// handle the callback after twitter has authenticated the user
+
+	app.get('/auth/twitter/callback', 
+		passport.authenticate('twitter', { 
+			successRedirect: '/loginSuccess',
+			failureRedirect: '/' 
+		})/* ,
+		function(req, res) {
+			console.log(req.user);
+			var query = "SELECT * FROM `users` WHERE `twitter_id` = '"+req.user.id+"'";	
+			console.log(query);
+			connection.query(query, function(err, rows){
+				if(err) throw err;				
+				var datas = {};
+				console.log(rows);
+				if(rows.length > 0){
+					datas.id = rows[0].id;
+					datas.first_name = rows[0].first_name;
+					datas.last_name = rows[0].last_name;
+					datas.email = rows[0].email_id;
+					datas.img = rows[0].profile_image;
+					datas.facebook_id = rows[0].facebook_id;
+					datas.twitter_id = rows[0].twitter_id;
+					datas.gplus_id = rows[0].gplus_id;
+					req.session.users =datas;		
+					res.redirect('#/');					
+				}else{
+					console.log('else');
+					req.session.users =req.user;		
+					res.redirect('#/');	
+				}
+			});
+		} */
+	);
+	
+	app.get('/loginSuccess', function(req, res, next) {
+		var query = "SELECT * FROM `users` WHERE `twitter_id` = '"+req.user.id+"'";	
+		console.log(query);
+		connection.query(query, function(err, rows){
+			if(err) throw err;				
+			var datas = {};
+			console.log(rows);
+			if(rows.length > 0){
+				datas.id = rows[0].id;
+				datas.first_name = rows[0].first_name;
+				datas.last_name = rows[0].last_name;
+				datas.email = rows[0].email_id;
+				datas.img = rows[0].profile_image;
+				datas.facebook_id = rows[0].facebook_id;
+				datas.twitter_id = rows[0].twitter_id;
+				datas.gplus_id = rows[0].gplus_id;
+				req.session.users =datas;		
+				res.redirect('#/');					
+			}else{
+				console.log('else');
+				req.session.users =req.user;		
+				res.redirect('#/');	
+			}
+		});
+	});
+	
 };
-
-
-
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.redirect('/');
-}

@@ -14,7 +14,7 @@
 				<div class="desc-wrapper" data-content-field="description">
 					<p><strong>Read a Book Challenge</strong></p>
 					<p>Lets change the world, one book at a time.</p>
-					<p><a ng-click="call()"><strong>Accept the challenge</strong></a></p>
+					<p><a href="" ng-click="startChallenge()"><strong>Accept the challenge</strong></a></p>
 				</div>
 			</div>
 			<div class="index-section-wrapper page-content">
@@ -44,8 +44,7 @@
 										<div class="image-block-outer-wrapper layout-caption-below ">
 											<div class="intrinsic about" style="max-width:1080.0px;">
 												<div style="padding-bottom:100.0%;" class="image-block-wrapper   has-aspect-ratio" >
-													<noscript><img src="images/about-img.jpg"  alt="about-img.jpg"  /></noscript>
-													<img class="thumb-image" alt="about-img.jpg" src="images/about-img.jpg" class="img-responsive" />
+													<img class="thumb-image" alt="about-img.jpg" src="images/about-banner.jpg" class="img-responsive" />
 												</div>
 											</div>
 										</div>
@@ -193,7 +192,7 @@
 								</div>
 								<div class="sqs-block html-block sqs-block-html" data-block-type="2" id="block-e4732d7bbea7bbb1de62">
 									<div class="sqs-block-content">
-										<h3 class="text-align-center">Sufiyan qadir</h3>
+										<h3 class="text-align-center">Anamica Jain</h3>
 										<p class="text-align-center">The Executor.</p>
 									</div>
 								</div>
@@ -204,9 +203,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- comment the linebreak between these two elements because science
-		-->
-		<!-- contact number popup -->   
 <div id="detail-verify" class="fin-modal">
 	<!--<span class="finish-close">×</span>-->
 	<div class="read-popup">
@@ -229,6 +225,33 @@
 			</div>
 			<div class="form-button-wrapper form-button-wrapper--align-left">
 				<input class="button sqs-editable-button detail-verify-btn" value="Submit" type="button" ng-click="checkDetails()" >
+			</div>
+		</form>
+	</div>
+</div>
+<div id="login-popup" class="fin-modal">
+<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup acpt-chllng-popup">
+		<form autocomplete="on" action="" method="POST" onsubmit="">
+			<div class="field-list clear">
+				<div class="form-item field number required">
+					<label class="title text-center">Please Login to Continue!</label>
+				</div>
+				<div class="col-xs-12">
+					<div class="row">
+						<div class="col-lg-12">
+							<a ng-click="login('fb')"><img src="images/facebook.png" alt="" class="img-responsive"></a>
+						</div>
+						
+						<div class="col-lg-12">
+							<a  href="/auth/twitter"><img src="images/twitter.png" alt="" class="img-responsive"></a>
+						</div>
+						
+						<div class="col-lg-12">
+							<a ng-click="login('google')"><img src="images/gmail.png" alt="" class="img-responsive"></a>
+						</div>
+					</div>
+				</div>
 			</div>
 		</form>
 	</div>
@@ -263,7 +286,7 @@
 			</div>
 		</form>
 	</div>
-</div> -->
+</div> 
 <script>
 	$(document).ready(function() {
 	$('.js-activated').dropdownHover().dropdown();
@@ -286,4 +309,4 @@
 	$('#mobile-verify').show();
 	});	  
 	});
-</script>
+</script>-->

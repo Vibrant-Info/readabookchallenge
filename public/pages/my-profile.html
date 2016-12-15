@@ -3,7 +3,7 @@
 		background-color: black !important;
 	}
 </style>
-<main id="page" role="main" ng-controller="profileController" data-ng-init="loadData()">
+<main id="page" role="main" data-ng-init="toggle=true">
 	<!-- comment the linebreak between these two elements because science
 		--><!-- comment the linebreak between these two elements because science
 		-->
@@ -12,28 +12,42 @@
 		<div id="media" class="index-section">
 			<div class="index-section-wrapper page-content">
 
-				<div class="text-center" style="padding: 35px;">
+				<div class="text-center profile-nme" style="padding: 35px 0px 0px;">
 					<img src="{{profileData.profile_image}}" alt="{{profileData.first_name}} {{profileData.last_name}}" height="216px" width="216px"/>
 					<br/><strong>{{profileData.first_name}} {{profileData.last_name}}</strong>
 				</div>
-				<div class="text-center" ng-if="existChallenge">
+				<div class="text-center countdown_timer" ng-if="timerChallenge">
 					<span id="future_date"></span>
+					<div class="timer_txt">
+                                   <span>Days</span>
+                                   <span>Hours</span>
+                                   <span>Minutes</span>
+                                   <span>Seconds</span>
+                    </div>
 				</div>
+				<div class="clearfix"></div>
 				<div class="col-xs-12">
 					<div class="text-center" ng-if="startChallenge">
-						<a class="button sqs-system-button sqs-editable-button btn-start" href="#/start-challenge">Start the Challenge</a>
+						<a class="button sqs-system-button sqs-editable-button btn-start" id="startChallenges" href="" ng-click="start_challenge()">Start the Challenge</a>
+					</div>
+					
+					<div class="text-center" ng-if="pickupRequest">
+						<a class="button sqs-system-button sqs-editable-button btn-start" href="">Pickup Request Sent</a>
+					</div>
+					<div class="text-center" ng-if="notConfirmChallenge">
+						<a class="button sqs-system-button sqs-editable-button btn-start" href="">Your order will reached you soon</a>
 					</div>
 					<div class="col-xs-12 col-sm-6 text-right" ng-if="existChallenge">
-						<a class="button sqs-system-button sqs-editable-button btn-start return-books">Return the Books</a>
+						<a class="button sqs-system-button sqs-editable-button btn-start return-books" ng-click="returnPopup()">Return the Books</a>
 					</div>
 					<div class="col-xs-12 col-sm-6 text-left" ng-if="existChallenge">
-						<a class="button sqs-system-button sqs-editable-button btn-start time-ext">Extend the Time</a>
+						<a class="button sqs-system-button sqs-editable-button btn-start time-ext" ng-click="extendPopup()">Extend the Time</a>
 					</div>
 				</div>
 				<div class="form-wrapper">
 					<div class="form-inner-wrapper">
 							<div class="field-list clear">
-								<div class="form-group">
+								<div class="form-group multi-selct">
 									<label for="inputEmail" class="profile-label">Favourite Genre :</label>
 									<select id="interestCategory" multiple="multiple" class="multi-input field-element">
 										<option ng-repeat="x in gnere" value="{{x.id}}" >{{x.name}}</option>
@@ -52,13 +66,17 @@
 												</div>
 												<div class="field-list clear">
 													<div id="deposit" class="form-item field text">
-														<label class="title profile-label" for="deposit">Deposit Amount</label>
+														<label class="title profile-label" for="deposit">Refundable Deposit Amount</label>
 														<div class="profile-input">
 															<div class="col-xs-12 col-sm-6 col-md-8 nopadding">
 																<label class="caption"><input class="field-element text" type="text" id="deposit" ng-model="profileData.wallet" disabled/></label>
 															</div>
+															
 															<div class="col-xs-12 col-sm-6 col-md-4 nopadding text-right">
-																<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-if="profileData.wallet < 0">Pay Deposit</button> <button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-if="profileData.wallet > 0">Withdraw</button>
+															
+																<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-show="depositBtnShow" ng-click="payDeposits()">Pay Deposit</button> 
+																<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with"  ng-click="withdraw()" ng-if="wallet_status != 'pending'">Withdraw</button>
+																<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-if="wallet_status == 'pending'" >Request Sent</button>
 															</div>
 														</div>
 													</div>
@@ -84,17 +102,15 @@
 															</div>
 															<div class="field first-name">
 																<div>Contact Number <span class="required">*</span></div>
-																<label class="caption"><input class="field-element field-control"
+																<label class="caption"><input numbers-only class="field-element field-control"
 																	type="text"
-																	ng-model="profileData.phone_number" required/>
+																	ng-model="profileData.phone_number" maxlength="10"  required/>
 																</label>
 															</div>
 															<div class="field last-name">
 																<div>Alternative Contact Number <span class="required"></span></div>
-																<label class="caption"><input class="field-element field-control"
-																	type="text"
-																	ng-model="profileData.alt_phone_number"
-																	/>
+																<label class="caption">
+																<input class="field-element field-control" type="text" numbers-only	ng-model="profileData.alt_phone_number" maxlength="10" />
 																Please provide an alternative contact number on which we can get in touch with you.</label>
 															</div>
 														</fieldset>
@@ -106,9 +122,9 @@
 														</div>
 														<div class="form-item field email required">
 															<label class="caption">Age<span class="required"></span>
-															<input class="field-element" name="email" 
+															<input class="field-element" name="age" 
 																type="text"  
-																ng-model="profileData.age"/></label>
+																ng-model="profileData.age" numbers-only/></label>
 														</div>
 														<p class="form-subtitle caption"><strong>Shipping and Billing Details</strong></p>
 														<div class="form-item field textarea required">
@@ -145,7 +161,7 @@
 														</div>
 													</div>
 													<div class="form-button-wrapper form-button-wrapper--align-left">
-														<input type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-click="updateProfile()" value="SAVE">
+														<input type="button" class="button sqs-system-button sqs-editable-button btn-pay-with" ng-click="updateProfile()" value="SAVE">&nbsp;<span class="panel-danger">{{updateErrorMessage}}</span><span class="panel-success">{{updateSuccessMessage}}</span>
 													</div>
 												</form>
 											</div>
@@ -155,9 +171,9 @@
 									<div class="panel-heading" slide-toggle="#derp">
 										<h4 class="panel-title text-center">
 											<a class="accordion-toggle">
-												<div class="bounce">
-													<i class="fa fa-angle-down" aria-hidden="true"></i>
-													<i class="fa fa-angle-up" aria-hidden="true"></i>
+												<div ng-click="toggle = !toggle">
+													<i class="fa fa-angle-down" ng-show="toggle"></i>
+													<i class="fa fa-angle-up" ng-show="!toggle"></i>
 												</div>
 											</a>
 										</h4>
@@ -167,9 +183,9 @@
 							
 							
 							<div class="nav nav-tabs profile-tab">
-								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'reading'}"><a href="" ng-click="content = 'reading'">Currently Reading</a></div>
-								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'wishlist'}"><a href="" ng-click="content = 'wishlist'">My Wishlist</a></div>
-								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'library'}"><a href="" ng-click="content = 'library'">My Library</a></div>
+								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'reading'}"><a href="" ng-click="content = 'reading'" data-toggle="tooltip" title="Books you've taken up for the challenge">Currently Reading</a></div>
+								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'wishlist'}"><a href="" ng-click="content = 'wishlist'" data-toggle="tooltip" title="Add books you would like to read">My Wishlist</a></div>
+								<div class="col-xs-12 col-sm-4 tb-pdgm tb-bdr read-tab" ng-class="{'active': content == 'library'}"><a href="" ng-click="content = 'library'" data-toggle="tooltip" title="Add books you've already read">My Library</a></div>
 							</div>
 							<div class="tab-content profile-tab-content" ng-switch="content">
 								<div id="home" class="" ng-switch-when="reading">
@@ -177,46 +193,63 @@
 										<div class="row row-pdgm">
 											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device" ng-repeat="details in books" >
 												<div class="buk-nme">
-													<div class="buk-img">
+													<div class="buk-img col-xs-6" >
 														<img src="{{details.cover}}" alt="">
 													</div>
-													<div class="buk-dtls">
+													<div class="buk-dtls col-xs-6">
 														<p>{{details.title}}</p>
 														<p>{{details.author}}</p>
-														<p>Genre : {{details.category_name}}</p>
+														<!--<p>Genre : {{details.category_name}}</p>-->
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div id="menu1" class="" ng-switch-when="wishlist">
+								<div id="menu1" class="dynamic-grid" ng-switch-when="wishlist">
 									<div class="col-xs-12 nopadding">
 										<div class="row">
 											<div class="col-sm-12">
 												<div id="imaginary_container">
 													<div class="input-group stylish-input-group">
-														<input type="text" class="form-control"  placeholder="Search" >
+														<input type="text" class="form-control"  placeholder="Search" ng-model="wishkeyword" ng-keyup="wishlistSearch(wishkeyword)">
 														<span class="input-group-addon">
-														<button type="submit">
+														<button id="searchwishlist" ng-click="wishlistSearch(wishkeyword)">
 														<span class="glyphicon glyphicon-search"></span>
 														</button>  
 														</span>
 													</div>
+													
+													<div class="srch-dropdown" ng-show="wishlistContent">
+														<button type="button" class="close" ng-click="closeWishlist()">&times;</button>
+														<div class="srch_panel" ng-repeat="data in wishsearchResults">
+															<div class="srch_img">
+																<img src="{{data.volumeInfo.imageLinks.smallThumbnail}}" alt="">
+															</div>
+															<div class="srch_txt">
+																<h4>{{data.volumeInfo.title}}</h4>
+															</div>
+															
+															<div class="srch_btn">
+																<button type="button" class="srch_add_btn" ng-click="addWishlist(data, $index)">{{data.status ? data.status : 'ADD'}}</button>
+															</div>
+														</div>	
+													</div>
 												</div>
 											</div>
 										</div>
-										<div class="row row-pdgm">
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-1.jpg" alt="">
+										<div class="row row-pdgm dynamic-grid">
+											<div class="col-xs-12">{{emptyWishlist}}</div>
+											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device" ng-repeat="data in listWishlist">
+												<div class="buk-nme row">
+													<div class="buk-img col-xs-6">
+														<img src="{{data.cover_image}}" alt="{{data.title}}">
 													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
+													<div class="buk-dtls col-xs-6">
+														<p>{{data.title}}</p>
+														<p>{{data.author}}</p>
+														<!--<p>Genre : {{data.genre}}</p>-->
+														<p><i class="fa fa-trash" aria-hidden="true" ng-click="removeWishlist(data.id)"></i></p>
 													</div>
 												</div>
 											</div>
@@ -229,27 +262,44 @@
 											<div class="col-sm-12">
 												<div id="imaginary_container">
 													<div class="input-group stylish-input-group">
-														<input type="text" class="form-control"  placeholder="Search" >
+														<input type="text" class="form-control"  placeholder="Search" ng-model="libkeyword" ng-keyup="librarySearch(libkeyword)" >
 														<span class="input-group-addon">
-														<button type="submit">
+														<button id="searchlibrary" ng-click="librarySearch(libkeyword)">
 														<span class="glyphicon glyphicon-search"></span>
 														</button>  
 														</span>
 													</div>
+													
+													<div class="srch-dropdown" ng-show="libContent">
+														<button type="button" class="close" ng-click="closeWishlist()">&times;</button>
+														<div class="srch_panel" ng-repeat="data in listsearchResults">
+															<div class="srch_img">
+																<img src="{{data.volumeInfo.imageLinks.smallThumbnail}}" alt="">
+															</div>
+															<div class="srch_txt">
+																<h4>{{data.volumeInfo.title}}</h4>
+															</div>
+															
+															<div class="srch_btn">
+																<button type="button" class="srch_add_btn" ng-click="addLibrary(data, $index)">{{data.status ? data.status : 'ADD'}}</button>
+															</div>
+														</div>	
+													</div>
 												</div>
 											</div>
 										</div>
-										<div class="row row-pdgm">
-											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device">
-												<div class="buk-nme">
-													<div class="buk-img">
-														<img src="images/book-1.jpg" alt="">
+										<div class="row row-pdgm dynamic-grid">
+											<div class="col-xs-12">{{emptyLibrary}}</div>
+											<div class="col-xs-6 col-sm-6 col-md-4 mrgn-btm buk-mobile-device" ng-repeat="data in listLibrary">
+												<div class="buk-nme row">
+													<div class="buk-img col-xs-6">
+														<img src="{{data.cover_image}}" alt="{{data.title}}">
 													</div>
-													<div class="buk-dtls">
-														<p>Name of the book</p>
-														<p>Author</p>
-														<p>Genre : Fictional</p>
-														<p><i class="fa fa-trash" aria-hidden="true"></i></p>
+													<div class="buk-dtls col-xs-6">
+														<p>{{data.title}}</p>
+														<p>{{data.author}}</p>
+														<!--<p>Genre : {{data.genre}}</p>-->
+														<p><i class="fa fa-trash" aria-hidden="true" ng-click="removeLibrary(data.id)"></i></p>
 													</div>
 												</div>
 											</div>
@@ -265,146 +315,183 @@
 	</div>
 	</div>
 	</div>
-	</div><!-- comment the linebreak between these two elements because science
-		-->
-</main>
-<!-- Paytm Details for Withdrawal popup -->
-<div id="return-books" class="fin-modal">
-	<span class="finish-close">×</span>
-	<div class="read-popup">
-		<form autocomplete="on" action="" method="POST" onsubmit="">
-			<div class="field-list clear">
-				<div class="col-xs-12">
-					<div class="row">
-						<div class="col-xs-12 col-sm-6">
-							<div class="gam-img-bdr">
-								<img src="images/romance.jpg" alt="" id="img-select">
-							</div>
-							<p>ROMANCE</p>
-						</div>
-						<div class="col-xs-12 col-sm-6">
-							<div class="gam-img-bdr">
-								<img src="images/romance.jpg" alt="" id="img-select">
-							</div>
-							<p>ROMANCE</p>
-						</div>
-						<div class="form-item field number required">
-							<label class="title">Reason</label>
-							<input class="field-element" spellcheck="false" type="text">
-						</div>
+	</div>
+	<!-- ADD DEPOSITE -->
+<div id="deposite" class="fin-modal">
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup pay_popup">
+		<form method="POST" name="customerData" action="/ccavRequestHandler">
+			
+			<input type="hidden" name="merchant_id" id="merchant_id" value="113271" /> 
+			<input type="hidden" name="order_id" value="{{WalletOrderNumber}}" />
+			<input type="hidden" name="currency" value="INR" />
+			<input type="hidden" name="amount" value="{{depositeAmountWallet}}" />
+			<input type="hidden" name="redirect_url" value="http://www.readabookchallenge.com/ccavResponseHandler" />
+			<input type="hidden" name="cancel_url" value="http://www.readabookchallenge.com/ccavResponseHandler" />
+			<input type="hidden" name="language" id="language" value="EN" />
+			<input type="hidden" name="billing_name" value="{{profileData.first_name}} {{profileData.last_name}}" />
+			<input type="hidden" name="billing_address" value="{{profileData.address}}" />
+			<input type="hidden" name="billing_zip" value="{{profileData.pincode}}" />
+			<input type="hidden" name="billing_email" value="{{profileData.email_id}}" />
+			<input type="hidden" name="billing_tel" value="{{profileData.phone_number}}" />
+			<input type="hidden" name="billing_country" value="India" />
+			<input type="hidden" name="billing_city" value="{{profileData.city}}" />
+		</form>	
+		<div class="field-list clear">
+			<div class="col-xs-12">
+				<div class="row pay_deposit">
+					<div class="pay-bdr">
+						<p>Rs. {{depositeAmount}}</p>
 					</div>
 				</div>
 			</div>
-			<div class="form-button-wrapper form-button-wrapper--align-left">
-				<input class="button sqs-editable-button" value="Continue" type="submit">
-			</div>
-		</form>
-	</div>
-</div>
-<!-- Paytm Details for Withdrawal popup -->
-<!-- mobile verification popup -->
-<div id="time-ext" class="fin-modal">
-	<span class="finish-close">×</span>
-	<div class="read-popup">
-		<form autocomplete="on" action="" method="POST" onsubmit="">
-			<div class="field-list clear">
-				<div class="form-item field number required">
-					<label class="title">Time of Extension</label>
-					<input  spellcheck="false" type="text">
-					<!--<select>
-						<option>1 Week</option>
-						<option>2 Weeks</option>
-						<option>3 Weeks</option>
-						<option>4 Weeks</option>
-						</select>-->
-				</div>
-			</div>
-		</form>
-		<div class="form-button-wrapper form-button-wrapper--align-left">
-			<input class="button sqs-editable-button" value="Pay" type="submit">
+			<div class="form-button-wrapper form-button-wrapper text-right">
+				<button type="button" class="button sqs-system-button sqs-editable-button btn-pay-with pay_btn_mrgn" ng-click="proceed()">Pay Now</div>
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-	$('select').select2();
-	$(document).ready(function(){
-	$('.read-tab a').click(function(){
-	$('.read-tab').removeClass('active');
-	$(this).parent().addClass('active');
-	});
-	});
-</script>
-<script>
-	$(document).ready(function(){
+<!-- ADD DEPOSITE -->
+
+<!-- Paytm Details for Withdrawal popup -->
+<div id="paytm-pop" class="fin-modal">
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup">
+		<form name="paytmForm" role="form">
+			<div class="field-list clear">
+				<h2>Paytm Details for Withdrawal</h2>
+				<div class="form-item field number required">
+					<label class="title">Contact Number <span class="required">*</span></label>
+					<input class="field-element" type="text" ng-model="paytm.mobile" required>
+				</div>
+			</div>
+			<div class="form-button-wrapper form-button-wrapper--align-left">
+				<input type="button" class="button sqs-editable-button" value="Submit" ng-click="sendRequest()">
+			</div>
+		</form>
+	</div>
 	
-	$('.return-books').click(function(e){
-	  $('#collapseOne').collapse();
-	});
-	
-	
-	$('.return-books').click(function(e){
-	  $('#return-books').show();
-	  e.stopPropagation();
-	});	
-	$('.finish-close').click(function(){
-	  $('#return-books').hide();
-	});
-	$('.time-ext').click(function(e){
-	  $('#time-ext').show();
-	  e.stopPropagation();
-	});	
-	$('.finish-close').click(function(){
-	  $('#time-ext').hide();
-	});
-	$('body').click(function() {
-	  $('#return-books').hide();
-	});
-	
-	$('.read-popup').click(function(e) {
-	    e.stopPropagation();
-	});
-	});
-	
-	function getTimeRemaining(endtime) {
-	  var t = Date.parse(endtime) - Date.parse(new Date());
-	  var seconds = Math.floor((t / 1000) % 60);
-	  var minutes = Math.floor((t / 1000 / 60) % 60);
-	  var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-	  var days = Math.floor(t / (1000 * 60 * 60 * 24));
-	  return {
-	    'total': t,
-	    'days': days,
-	    'hours': hours,
-	    'minutes': minutes,
-	    'seconds': seconds
-	  };
-	}
-	
-	function initializeClock(id, endtime) {
-	  var clock = document.getElementById(id);
-	  var daysSpan = clock.querySelector('.days');
-	  var hoursSpan = clock.querySelector('.hours');
-	  var minutesSpan = clock.querySelector('.minutes');
-	  var secondsSpan = clock.querySelector('.seconds');
-	
-	  function updateClock() {
-	    var t = getTimeRemaining(endtime);
-	
-	    daysSpan.innerHTML = t.days;
-	    hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-	    minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-	    secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-	
-	    if (t.total <= 0) {
-	      clearInterval(timeinterval);
-	    }
-	  }
-	
-	  updateClock();
-	  var timeinterval = setInterval(updateClock, 1000);
-	}
-	
-	var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
-	initializeClock('clockdiv', deadline);
-	
-</script>
+</div>
+<!-- Paytm Details for Withdrawal popup -->
+<!-- Thankyou popup -->
+<div id="thankyou-pop" class="fin-modal" >
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup">
+		<form autocomplete="on" action="" method="POST" onsubmit="">
+			<div class="field-list clear">
+				<h2 class="text-center">REQUEST SENT</h2>
+				<div class="form-item field number required">
+					<label class="title text-center">Your Request will be Processed<br>
+					Within 7-10 Working Days</label>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!-- Thankyou popup -->
+<!-- Return popup -->
+<div id="return-books" class="fin-modal">
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup retn-buk-popup">
+		<form autocomplete="on" action="" method="POST" onsubmit="">
+			<div class="field-list clear">
+					
+				  <div class="col-xs-12 nopadding">
+				  <div class="row">
+					<div class="col-xs-12 col-sm-6">
+					 <div class="pop_img">
+						<div class="gam-img-bdr" ng-click="selectOption('newBook')" ng-class="{active: newBook}">
+							<img src="images/book.jpg" alt="" id="img-select">
+							<div class="game-shadow">
+							  <div class="gam-tbl">
+								<div class="gam-tbl-cell"><i class="fa fa-check" aria-hidden="true"></i></div>
+							  </div>
+							</div>
+							</div>
+							<p class="text-left">REQUEST NEW PACKAGE</p>
+						</div>
+					</div>
+					 <div class="col-xs-12 col-sm-6 text-right">
+					 <div class="pop_img">
+						<div class="gam-img-bdr" ng-click="selectOption('returnBook')" ng-class="{active: returnBook}">
+							<img src="images/pickup.jpg" alt="" id="img-select">
+							<div class="game-shadow">
+							  <div class="gam-tbl">
+								<div class="gam-tbl-cell"><i class="fa fa-check" aria-hidden="true"></i></div>
+							  </div>
+							</div>
+							</div>
+							<p class="text-left">ONLY PICKUP</p>
+						</div>
+					</div>
+					<div class="form-item field number required col-xs-12" ng-class="{hide: reason}">
+						<label class="title">Reason</label>
+						<input class="field-element" spellcheck="false" type="text" ng-model="returnReason" ng-class="{error: reasonEmpty}">
+					</div>
+				  </div>
+				 </div>
+			</div>
+			<div class="form-button-wrapper form-button-wrapper--align-left">
+				<input class="button sqs-editable-button" value="Continue" type="button" ng-click="returnContinue()">
+			</div>
+		</form>	
+	</div>
+</div>
+<!-- Return popup -->
+<!-- Time extention  popup -->
+<div id="time-ext" class="fin-modal">
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup">
+		<div class="field-list">
+			<span class="panel-danger text-center">{{extError}}</span>
+			<div class="form-item field required">
+				<label class="title">Time of Extension</label>
+				<select ng-model="extendTimeVal" class="form-control" ng-change="getAmount(extendTimeVal)">
+					<option value='1'>1 Week</option>
+					<option value='2'>2 Weeks</option>
+					<option value='3'>3 Weeks</option>
+					<option value='4'>4 Weeks</option>
+				</select>
+			</div>
+		</div>
+		<div class="field-list" ng-show="extendAmntHolder">
+			<br/>
+			<h4>Amount for Extension: <b>Rs. {{extendAmountWeeks}}</b></h4>
+		</div>
+		<div class="form-button-wrapper form-button-wrapper--align-left">
+			<br/>			
+			<input class="button sqs-editable-button" value="Pay" type="button" ng-click="extendTime()">
+		</div>
+	</div>
+</div>
+
+<!-- Time Extend Thankyou popup -->
+<div id="time-thankyou-pop" class="fin-modal">
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup">
+		<form autocomplete="on" action="" method="POST" onsubmit="">
+			<div class="field-list clear">
+				<h2 class="text-center">THANK YOU</h2>
+				<div class="form-item field number required">
+					<label class="title text-center">Rs. {{extendAmountWeeks}} has been deducted from your wallet for the extention.</label>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!-- Already challenge Taken popup -->
+<div id="taken_challenge_pop" class="fin-modal">
+	<span class="finish-close" ng-click="closeModal()">×</span>
+	<div class="read-popup">
+		<form autocomplete="on" action="" method="POST" onsubmit="">
+			<div class="field-list clear">
+				<h2 class="text-center"></h2>
+				<div class="form-item field number required">
+					<label class="title text-center">You have already taken the challenge!</label>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+</main>
+
+

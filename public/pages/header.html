@@ -11,18 +11,20 @@
           </button>
           <div id="siteTitleWrapper" class="wrapper" data-content-field="site-title">
             
-              <h1 id="siteTitle" class="site-title"><a href="index.html">Read a Book</br> Challenge</a></h1>
+              <h1 id="siteTitle" class="site-title"><a href="#/">Read a Book</br> Challenge</a></h1>
             
           </div>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           
           <ul class="nav navbar-nav navbar-right login-open">
-            <li><a href="#/" class="active">Home</a></li>
-            <li><a href="#/about-us">How it Works</a></li>
-			<li><a href="#/gallery">Gallery</a></li>
-			<li><a href="#/contact-us">Contact Us</a></li>
-            <li ng-if="hasuser == 'false'">
+            <li><a href="#/" ng-class="{active: homePage}" ng-click="activeClass('homePage')">Home</a></li>
+            <li><a href="#/about-us" ng-class="{active: aboutPage}" ng-click="activeClass('aboutPage')">How it Works</a></li>
+			<li><a href="#/gallery" ng-class="{active: galleryPage}" ng-click="activeClass('galleryPage')">Gallery</a></li>
+			<li><a href="#/faq" ng-class="{active: faqPage}" ng-click="activeClass('faq')">FAQ</a></li>
+			<li><a href="#/contact-us" ng-class="{active: contactPage}" ng-click="activeClass('contactPage')">Contact Us</a></li>
+		
+            <li ng-if="!user">
 				<div class="dropdown" >
 				  <a class="signup-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" aria-expanded="false" >
 					Login/Sign Up
@@ -30,16 +32,16 @@
 				  
 				  <ul class="dropdown-menu login-dropdown">
 					<li><a ng-click="login('fb')"><img src="images/facebook.png" alt="" ></a></li>
-					<li><a ng-click="login('twitter')"><img src="images/twitter.png" alt="" ></a></a></li>
-					<li><a ng-click="login('google')"><img src="images/gmail.png" alt=""></a></a></li>
+					<li><a  href="/auth/twitter"><img src="images/twitter.png" alt="" ></a></li>
+					<li><a ng-click="login('google')"><img src="images/gmail.png" alt=""></a></li>
 					
 				  </ul>
 				</div>
 			</li>
-            <li ng-if="hasuser == 'true'">
+            <li ng-if="user">
 				<div class="dropdown" >
 				  <a class="signup-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" aria-expanded="false" >
-					Hi {{username}}
+					Hi {{user.first_name}}
 				  </a>
 				  
 				  <ul class="dropdown-menu login-dropdown">
@@ -52,5 +54,27 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+	<!-- Already challenge Taken popup -->
+<div id="email-pop" class="fin-modal">
+	<div class="read-popup">
+		<form autocomplete="on" action="" method="POST" onsubmit="">
+			<div class="field-list clear">
+				<div class="form-item field required col-xs-12" ng-class="{hide: reason}">
+					<label class="title">Please tell us your Email ID.</label>
+					<input class="field-element" type="email" ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" ng-model="missEmailId" placeholder="Enter your Email ID">
+				</div>
+				<div class="form-button-wrapper form-button-wrapper--align-left col-xs-12">
+					<input class="button sqs-editable-button" value="Continue" type="button" ng-click="getEmail(missEmailId)"><span class="panel-danger">{{message}}</span>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div id="email-error-pop" class="fin-modal">
+	<div class="read-popup">
+		<label class="title">We are not able to get you Email ID. Please Try Other Logins</label>
+	</div>
+</div>
 </header>
+
 	  

@@ -1,5 +1,5 @@
 var express = require('express');
-var path = require('path');
+//var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -10,24 +10,39 @@ var passport  = require('passport');
 var TwitterStrategy  = require('passport-twitter').Strategy;
 var app = express();
 var sess;
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'html');
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+var http = require('http'),
+    fs = require('fs'),
+    ccav = require('./ccavutil.js'),
+    qs = require('querystring'),
+    ccavReqHandler = require('./ccavRequestHandler.js'),
+    ccavResHandler = require('./ccavResponseHandler.js');
+	
+	
+/*
+ app.set('views', path.join(__dirname, 'public'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html'); 
+
+//app.use(express.static('public'));
+*/
+app.use(express.static('public'));
+app.set('views', __dirname + '/public');
+app.engine('html', require('ejs').renderFile);
+
+
+app.use('favicon',__dirname+'/public/favicon.ico');
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({secret: 'ssshhhhh',saveUninitialized: true,resave: true}));
 app.use(bodyParser.json());      
-app.use(bodyParser.urlencoded({extended: true}))
+//app.use(bodyParser.urlencoded({extended: true}))
 
- 
-/* var dbconfig = require('./config/dbconfig');
-var connection = mysql.createConnection(dbconfig.connection); */
+app.use(passport.initialize());
+app.use(passport.session());
+var dbconfig = require('./config/dbconfig');
 
 var con = mysql.createConnection({
 	host: "localhost",
@@ -45,65 +60,110 @@ con.connect(function(err) {
 
 require('./routes/routes.js')(app,passport,con);
 require('./routes/users.js')(app,passport,con);
+require('./routes/startChallenge.js')(app,passport,con);
+//require('./routes/ccavenue_payment.js')(app,passport,con);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.get('/about', function (req, res){
+    	res.render('dataFrom.html');
 });
 
-// error handlers
+app.post('/ccavRequestHandler', function (request, response){
+	ccavReqHandler.postReq(request, response);
+});
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+
+app.post('/ccavResponseHandler', function (request, response){
+		console.log(response);
+		console.log(request);
+        ccavResHandler.postRes(request, response);
+});
+app.post('/ccavRequestHandlerFinal', function (request, response){	
+	console.log(request);
+	ccavReqHandler.postReqFinal(request, response);
+});
+
+
+app.post('/ccavResponseHandlerFinal', function (request, response){
+        ccavResHandler.postResFinal(request, response, con);
+});	
+	
+   // used to serialize the user for the session
+    passport.serializeUser(function(user, done) {
+       console.log(user);
+      done(null, user);
+     //   done(null, user.id);
     });
-  });
-}
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+    // used to deserialize the user
+    passport.deserializeUser(function(id, done) {
+       done(null, id);
+    });
+    
+   
+    // =========================================================================
+    // TWITTER =================================================================
+    // =========================================================================
+    passport.use(new TwitterStrategy({
+        consumerKey     : dbconfig.twitterAuth.TWITTER_KEY,
+        consumerSecret  : dbconfig.twitterAuth.TWITTER_SECRET,
+        callbackURL     : dbconfig.twitterAuth.callbackURL
 
+    },
+    function(token, tokenSecret, profile, done) {      
+        process.nextTick(function() {		
+			var datas = {};
+			datas.id=profile.id;
+			datas.first_name=profile.displayName;
+			datas.last_name="";
+			datas.email=profile.email;
+			datas.img=profile.photos[0].value;
+			var query = "SELECT * FROM `users` WHERE `twitter_id` = '"+datas.id+"'";	
+			con.query(query, function(err, rows){
+				if(err) throw err;
+				
+				if(rows.length == 0){
+					var str = datas.img;
+					var new_img = str.replace(/_normal/g, "");
+					insert_query = "INSERT INTO `users` (`first_name`,`last_name`,`email_id`,`twitter_id`,`profile_image`) VALUES ('"+datas.first_name+"','"+datas.last_name+"','"+datas.email+"','"+datas.id+"','"+new_img+"')";
+						con.query(insert_query, function(err, rows){
+							if(err) throw err;	
+						});
+				}else{
+					var str = datas.img;
+					var new_img = str.replace(/_normal/g, "");
+					update_query = "UPDATE `users` SET `profile_image` = '"+new_img+"' , `first_name` = '"+datas.first_name +"', `last_name` = '"+datas.last_name+"' WHERE `twitter_id` = '"+datas.id+"'"					
+					con.query(update_query, function(err, rows){
+						if(err) throw err;
+					});
+				}
+			});
+          done(null, datas);          
+		});
+
+    }));
+
+
+app.listen(5000);
+/* 
 var debug = require('debug')('readabookchallenge:server');
 var http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
 
-var port = normalizePort(process.env.PORT || '3000');
+
+//var port = normalizePort(process.env.PORT || '5000');
+var port = normalizePort('5000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
 
 var server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+
 
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
+
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
@@ -121,9 +181,7 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
+
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -149,9 +207,7 @@ function onError(error) {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+
 
 function onListening() {
   var addr = server.address();
@@ -160,6 +216,6 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+	 */
 
-
-module.exports = app;
+//module.exports = app;

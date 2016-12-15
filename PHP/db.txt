@@ -1,0 +1,38 @@
+users
+	id
+	first_name
+	last_name
+	email_id
+	phone_number
+	alt_phone_number
+	age
+	facebook_id
+	gplus_id
+	twitter_id
+	profile_image
+	created_date
+	updated_date
+	status
+
+address
+	id
+	user_id
+	address_1
+	address_2
+	city
+	area
+	pincode
+	landmark
+	
+plans
+	id
+	plan
+	status
+	
+users_plans
+	id
+	user_id
+	plan_id
+
+book
+

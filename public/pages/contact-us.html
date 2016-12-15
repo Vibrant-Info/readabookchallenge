@@ -1,7 +1,4 @@
 <main id="page" role="main">
-            <!-- comment the linebreak between these two elements because science
-               --><!-- comment the linebreak between these two elements because science
-               -->
             <div id="content" class="main-content" data-content-field="main-content" data-collection-id="57ce904846c3c40137614551" >
                <!-- Create index sections -->
                <div id="hire-us" class="index-section" data-url-id="hire-us" data-collection-id="57cc5024e3df282738e55499" data-edit-main-image="Banner">
@@ -36,10 +33,8 @@
                                           <div class="sqs-block-content">
                                              <div class="form-wrapper">
                                                 <div class="form-inner-wrapper">
-                                                   <form autocomplete="on" action="https://rishav-jain-6ema.squarespace.com/" method="POST" onsubmit="return (function(form) { Y.use
-                                                      ('squarespace-form-submit', 'node',
-                                                      function (Y) { (new Y.Squarespace.FormSubmit({ formNode: Y.Node(form) })).submit('57cc6809c534a5dcc430ec96', '57cc5024e3df282738e55499', 'page-57cc5024e3df282738e55499') }); return false;})(this)">
-                                                      <div class="field-list clear">
+                                                    <form ng-submit="submit()" name="contactForm">
+														<div class="field-list clear">
                                                          <fieldset id="name-yui_3_17_2_39_1473013212432_10628" class="form-item fields name required">
                                                             <div class="title">Name <span class="required">*</span></div>
                                                             <legend>Name</legend>
@@ -48,40 +43,40 @@
                                                                   x-autocompletetype="given-name" type="text"
                                                                   spellcheck="false"
                                                                   maxlength="30"
-                                                                  data-title="First" />
+                                                                  data-title="First" 
+																  ng-model="query.first_name"/>
                                                                First Name</label>
                                                             </div>
                                                             <div class="field last-name">
                                                                <label class="caption"><input class="field-element field-control" name="lname"
                                                                   x-autocompletetype="surname" type="text"
-                                                                  spellcheck="false" maxlength="30" data-title="Last" />
+                                                                  spellcheck="false" maxlength="30" data-title="Last" 
+																  ng-model="query.last_name"/>
                                                                Last Name</label>
                                                             </div>
                                                          </fieldset>
-                                                         <div id="number-yui_3_17_2_1_1473013212432_65035" class="form-item field number required">
-                                                            <label class="title" for="number-yui_3_17_2_1_1473013212432_65035-field">Contact Number <span class="required">*</span></label>
-                                                            <input class="field-element" type="text" spellcheck="false" />
+                                                         <div class="form-item field number required">
+                                                            <label class="title" >Contact Number <span class="required">*</span></label>
+                                                            <input class="field-element" type="text" spellcheck="false" numbers-only ng-model="query.phone" maxlength="10"/>
                                                          </div>
-                                                         <div id="email-yui_3_17_2_39_1473013212432_10629" class="form-item field email required">
-                                                            <label class="title" for="email-yui_3_17_2_39_1473013212432_10629-field">Email Address <span class="required">*</span></label>
-                                                            <input class="field-element" name="email" x-autocompletetype="email" type="text" spellcheck="false" id="email-yui_3_17_2_39_1473013212432_10629-field" />
+                                                         <div class="form-item field email required">
+                                                            <label class="title">Email Address <span class="required">*</span></label>
+                                                            <input class="field-element" name="email" type="text" spellcheck="false" ng-model="query.emailid"/>
                                                          </div>
-                                                         <div id="text-yui_3_17_2_39_1473013212432_10630" class="form-item field text required">
-                                                            <label class="title" for="text-yui_3_17_2_39_1473013212432_10630-field">Subject <span class="required">*</span></label>
-                                                            <input class="field-element text" type="text" id="text-yui_3_17_2_39_1473013212432_10630-field" />
+                                                         <div class="form-item field text required">
+                                                            <label class="title" >Subject <span class="required">*</span></label>
+                                                            <input class="field-element text" type="text"  ng-model="query.subject"/>
                                                          </div>
-                                                         <div id="textarea-yui_3_17_2_39_1473013212432_10631" class="form-item field textarea required">
-                                                            <label class="title" for="textarea-yui_3_17_2_39_1473013212432_10631-field">Message <span class="required">*</span></label>
-                                                            <textarea class="field-element " id="textarea-yui_3_17_2_39_1473013212432_10631-field" ></textarea>
+                                                         <div class="form-item field textarea required">
+                                                            <label class="title" >Message <span class="required">*</span></label>
+                                                            <textarea class="field-element " ng-model="query.querymessage"></textarea>
                                                          </div>
                                                       </div>
                                                       <div class="form-button-wrapper form-button-wrapper--align-left">
                                                          <input class="button sqs-system-button sqs-editable-button" type="submit" value="Send Enquiry"/>
+														 <span class="panel-danger">{{message}}</span>
+														<span class="panel-success">{{SuccessMessage}}</span>
                                                       </div>
-                                                      <div class="hidden form-submission-text">
-                                                         <p>Thank you! We'l get in touch right away!</p>
-                                                      </div>
-                                                      <div class="hidden form-submission-html" data-submission-html=""></div>
                                                    </form>
                                                 </div>
                                              </div>
